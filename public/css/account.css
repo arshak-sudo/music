@@ -1,0 +1,108 @@
+body{
+	background-color: #f5f5f5;
+	margin:0;
+	padding: 0;
+	border: 0;
+	box-sizing: border-box;
+	color: 	#787878;
+}
+nav{
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+	background-color: white;
+	position: absolute;
+	height: 48px;
+	top: 0;
+	left: 0;
+}
+main{
+	position: relative;
+	top: 48px;
+	padding-left: 100px;
+	padding-right: 100px;
+	padding-top: 20px;
+	display: flex;
+	align-items: flex-start;
+}
+#nav-left{
+	padding-left: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+#search-form{
+	position: relative;
+	/*height: 48px;*/
+	margin-left: 25px;
+}
+#search-input{
+	display: block;
+	width: 100%;
+	border: 0;
+	outline: none;
+	padding: 0;
+	padding-left: 25px;
+	height: 31px;
+	background-color: #f3f3f3;
+	border-radius: 4px;
+}
+#search-button{
+	position: absolute;
+	border: 0;
+	outline: none;
+	padding: 0;
+	background-color: inherit;
+	color: #787878;
+	top: 8px;
+	left: 7px;
+}
+#navbar-user-dropedown{
+	margin-left: 20px;
+	position: relative;
+	display: block;
+}
+#navbar-user-dropedown-icon{
+	display: block;
+	cursor: pointer;
+}
+#navbar-user-dropedown-menu{
+	position: absolute;
+	z-index: 999;
+	top: 33px;
+	right: 0px;
+	background-color: white;
+	display: none;
+	width: 250px;
+	padding: 8px;
+	border-radius: 0 0 4px 4px;
+}
+#nav-right{
+	padding-right: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+}
+#navbar-avatar{
+	display: block;
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	border: 2px solid silver;
+}
+#logo{
+	font-family: normal;
+	font-weight: 600;
+	padding: 3px;
+	box-shadow: 4px 4px 8px rgba(0,0,255,0.2);
+	color: white;
+	background-color: rgba(0,0,200,0.5);
+	border-radius: 3px;
+}
+#site-name{
+	font-family: sans-serif;
+	font-weight: 600;
+	margin-left: 10px;
+	color: 	#787878;
+}

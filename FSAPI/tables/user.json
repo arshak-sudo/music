@@ -1,0 +1,48 @@
+[
+  {
+    "id": 1,
+    "firstName": "Arshak",
+    "lastname": "Petrosyan",
+    "username": "arshak",
+    "password": "$2b$10$Mj0pAlcbCkx1rmISO8aSpe.m6YYUsRsN21NjkMTQ1JGpylKhKRy62",
+    "role": "admin",
+    "gender": "male",
+    "date": "1994-06-29",
+    "rememberMe": true
+  },
+  {
+    "id": 2,
+    "firstName": "Test",
+    "lastname": "Test",
+    "username": "test",
+    "password": "$2b$10$kZFt4N2HwUD/S/dB7eldIO4BD/07dkyoI/WzdM9P8QygT4sgrTcMG",
+    "role": "user",
+    "gender": "female",
+    "date": "2000-02-11",
+    "rememberMe": true
+  },
+  {
+    "id": 3,
+    "firstName": "aaaaaaaaaaa",
+    "lastname": "rrrrrr",
+    "username": {},
+    "password": {},
+    "role": "rrrrrr"
+  },
+  {
+    "id": 4,
+    "firstName": "aaaaaaaaaaa",
+    "lastname": "rrrrrr",
+    "username": {},
+    "password": {},
+    "role": "rrrrrr"
+  },
+  {
+    "id": 5,
+    "firstName": "",
+    "lastname": "",
+    "username": {},
+    "password": {},
+    "role": ""
+  }
+]

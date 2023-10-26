@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Main</title>
+	<link rel="stylesheet" type="text/css" href="/css/home.css">
+	<link rel="stylesheet" type="text/css" href="/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<nav>
+		<div id="nav-left">
+			<span id="logo">AP</span>
+			<span id="site-name">PETROSSIAN</span>
+			<form action="" id="search-form">
+				<button type="submit" id="search-button">
+					<i class="fa fa-search"></i>
+				</button>
+				<input type="text" id="search-input" placeholder="Search">
+			</form>
+		</div>
+		<div id="nav-right">
+			<div id="navbar-avatar"></div>
+			<div id="navbar-user-dropedown">
+				<i class="fa fa-caret-down" id="navbar-user-dropedown-icon"></i>
+				<div id="navbar-user-dropedown-menu">
+					<a href="/logout">
+						<i class="fa fa-sign-out"></i>
+						logout
+					</a><br>
+					<a href="/settings">
+						<i class="fa fa-cog"></i>
+						settings
+					</a>
+				</div>
+			</div>
+		</div>
+	</nav>
+	<main>
+		<aside id="sidebar-left">
+			<a href="#" id="username"></a>
+			<a href="#" id="username">
+				<i class="fa fa-envelope"></i>
+				Messenger
+			</a>
+		</aside>
+		<div id="content">
+			<div id="content-tools">
+				<div id="content-tools-avatar"></div>
+				<form action="" id="content-tools-form">
+					<input type="text" placeholder="Whats new..." id="post-text-input">
+					<input type="file" id="post-file-input" hidden="">
+					<i class="fa fa-file" id="open-post-file-input"></i>
+					<button type="submit" id="post-submit">Done</button>
+				</form>
+			</div>
+		</div>
+		<aside id="sidebar-right">
+			<div id="sidebar-right-friends-block">
+				<span>Friends</span>
+			</div>
+		</aside>
+	</main>
+	<script type="text/javascript" src="/js/home.js"></script>
+</body>
+</html>

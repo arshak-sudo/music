@@ -1,0 +1,12 @@
+[
+  {
+    "id": 2,
+    "firstName": "aaaa",
+    "lastname": "aaaa",
+    "username": "aaaa",
+    "password": "$2b$10$7c5h.NeD20sXotsCTJQ5qO.GmBqW3GEoHPQd/S5BNZMM2NFzE7cMG",
+    "gender": "male",
+    "date": "",
+    "rememberMe": false
+  }
+]

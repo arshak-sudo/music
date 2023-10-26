@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Main</title>
+	<link rel="icon" type="image/png" href="/favicon.png">
+	<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+	<link rel="stylesheet" type="text/css" href="/font-awesome-4.7.0/css/font-awesome.min.css">
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	
+</head>
+<body>
+	<nav>
+		<div id="nav-left">
+			<span id="logo">AP</span>
+			<span id="site-name">PETROSSIAN</span>
+			<form action="" id="search-form">
+				<button type="submit" id="search-button">
+					<i class="fa fa-search"></i>
+				</button>
+				<input type="text" id="search-input" placeholder="Search">
+			</form>
+		</div>
+		<div id="nav-right">
+			
+		</div>
+	</nav>
+	<main>
+		<div id="content">
+			<form id="add_audio_form" action="/new-audio" method="POST" enctype="multipart/form-data">
+				<fieldset>
+					<legend>Add New Audio</legend>
+					<input type="text" name="title" id="title" placeholder="Song Title">
+					<br><br>
+					<input type="text" name="singer" id="singer" placeholder="Song Singer">
+					<br><br>
+					<input type="text" name="genre" id="genre" placeholder="Genre">
+					<br><br>
+					<div>
+						<span>Song Poster</span>
+						<input type="file" name="poster" id="poster">
+					</div>
+					<br>
+					<div>
+						<span>Audio File</span>
+						<input type="file" name="audio" id="audio">
+					</div>
+					<hr>
+					<button type="submit">Go</button>
+				</fieldset>
+			</form>
+		</div>
+	</main>
+	
+	<script type="text/javascript" src="/js/dashboard.js"></script>
+</body>
+</html>
