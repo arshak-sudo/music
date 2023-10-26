@@ -35,7 +35,13 @@ async function getTableData(){
 	data = JSON.parse(data);
 	return data;
 }
-
+async function getTableDataById(id){
+	var data = await fs.promises.readFile(file,  { encoding: 'utf8' });
+	data = JSON.parse(data);
+	var result = data.filter(function(a){ return a.id == id })[0];
+	return result;
+}
 
 module.exports.audioCreate = audioCreate;
 module.exports.getTableData = getTableData;
+module.exports.getTableDataById = getTableDataById;

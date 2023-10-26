@@ -1,8 +1,18 @@
 [
   {
     "id": 1,
-    "title": "",
-    "singer": "",
-    "genre": ""
+    "title": "Oops! i ded it again",
+    "singer": "Britney Spears",
+    "poster": "Oops! i ded it again.jpg",
+    "audio": "Britney SpearsOops!I Did It Again.mp3",
+    "genre": "pop"
+  },
+  {
+    "id": 2,
+    "title": "Barbie Girl ",
+    "singer": "Aqua",
+    "poster": "R0YuKKVuuLrlMjX4LD0dpcW2v1vWrYyJ_CIhSgCHICA.webp",
+    "audio": "Aqua - Barbie Girl.mp3",
+    "genre": "pop"
   }
 ]

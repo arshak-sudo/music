@@ -23,8 +23,6 @@ main{
 	padding-left: 100px;
 	padding-right: 100px;
 	padding-top: 20px;
-	display: flex;
-	align-items: flex-start;
 }
 #nav-left{
 	padding-left: 100px;
@@ -113,11 +111,18 @@ main{
 	color: 	#787878;
 }
 /*===================================================*/
-main{
-	display: flex;
-}
+
 #content{
 	display: flex;
 	width: 100%;
 	background-color: #c4c4c4;
+}
+.audioCardPoster{
+	display: block;
+	width: 30%;
+	height: 200px;
+}
+.audioCardPoster img{
+	display: block;
+	width: 100%;
 }

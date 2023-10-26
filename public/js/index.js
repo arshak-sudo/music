@@ -43,7 +43,6 @@ fetch("/session-user")
 	  	fetch("/cookie-user")
 			.then(data=>data.json())
 			.then(async (user) => {
-				console.log(user);
 				if(user){
 					usernameTag.innerHTML = `
 						<div id="navbar-avatar"></div>
@@ -98,4 +97,28 @@ async function navbarDropedown(){
 			document.getElementById('navbar-user-dropedown-menu').style.display = 'none';
 		}
 	});
+}
+
+$(document).ready(async () => {
+	var audios = await getAudios();
+	const contentContainer = $("#content");
+	$.each(audios, function( index, audio ) {
+	  	contentContainer.append(`
+	  		<div class='audioCard'>
+	  			<div class="audioCardPoster">
+	  				<img src='/uploads/${audio.poster}' />
+	  			</div>
+	  			<p><a href="/listen/${audio.id}">${audio.singer} - ${audio.title}</a></p>
+	  		</div>
+  		`);
+	});
+	var audioCards = $(".audioCard");
+	console.log(audioCards);
+
+});
+
+async function getAudios(){
+	var audios = await fetch("/audios");
+	audios = await audios.json();
+	return audios;
 }

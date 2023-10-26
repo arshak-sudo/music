@@ -182,21 +182,32 @@ app.get('/logout', async function(req, res) {
 app.get('/dashboard', async function(req, res) { 
     let session=req.session;
     let user = session.user;
-    // console.log('Cookies: ', req.cookies);
-    // console.log(user);
     res.sendFile(__dirname + "/public/pages/dashboard.html");
 });
 
 app.post("/new-audio", upload.fields([{ name: 'poster', maxCount: 1 }, { name: 'audio', maxCount: 8 }]), async function(req, res, next){
-    // console.log(JSON.parse(req.body));
-
-    console.log(req.files.poster);
-    console.log(req.body);
+    console.log(req.files.audio[0].originalname);
+    console.log(req.files.poster[0].originalname);
     
-  // var id = await Audio.audioCreate(req.body.title, req.body.singer, req.body.poster, req.body.audio, req.body.genre);
+  var id = await Audio.audioCreate(req.body.title, req.body.singer, req.files.poster[0].originalname, req.files.audio[0].originalname, req.body.genre);
   // return res.json(1);
-  return res.json(111);
+  return res.json(11);
 
+});
+
+app.get('/audios', async function(req, res) { 
+    var audios = await Audio.getTableData();
+    return res.json(audios);
+});
+
+app.get('/audio/:id', async function(req, res) { 
+    var audio = await Audio.getTableDataById(req.params.id);
+    console.log(audio);
+    return res.json(audio);
+});
+
+app.get('/listen/:id', async function(req, res) { 
+    res.sendFile(__dirname + "/public/pages/listen.html");
 });
 
 app.listen(port, () => {
