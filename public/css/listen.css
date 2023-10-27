@@ -134,10 +134,9 @@ audio::-webkit-media-controls-panel {
 
 #audioData{
 	font-family: sans-serif;
-	margin-top: 20px;
 	padding-left: 18px;
 	box-sizing: border-box;
 	display: block;
 	width: 80%;
-	margin: auto;
+	margin: 10px auto 0;
 }
