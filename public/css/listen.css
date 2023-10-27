@@ -137,4 +137,7 @@ audio::-webkit-media-controls-panel {
 	margin-top: 10px;
 	padding-left: 18px;
 	box-sizing: border-box;
+	display: block;
+	width: 80%;
+	margin: auto;
 }
