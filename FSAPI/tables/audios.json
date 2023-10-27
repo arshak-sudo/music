@@ -22,5 +22,29 @@
     "poster": "Cigarettes After Sex - Apocalypse.jpg",
     "audio": "Cigarettes After Sex - Apocalypse.mp3",
     "genre": "pop"
+  },
+  {
+    "id": 4,
+    "title": "Good Thing Gone",
+    "singer": "Elle King ",
+    "poster": "Elle King -.jpg",
+    "audio": "Elle King - Good Thing Gone.mp3",
+    "genre": "indi"
+  },
+  {
+    "id": 5,
+    "title": "Pumped Up Kicks",
+    "singer": "Foster The People",
+    "poster": "Foster The People - Pumped Up Kicks.jpg",
+    "audio": "Foster The People - Pumped Up Kicks.mp3",
+    "genre": "pop"
+  },
+  {
+    "id": 6,
+    "title": "Fade Out Lines",
+    "singer": "The Avener & Phoebe Killdeer",
+    "poster": "The Avener & Phoebe Killdeer - Fade Out Lines.jpg",
+    "audio": "The Avener & Phoebe Killdeer - Fade Out Lines (The Avener Rework).mp3",
+    "genre": "pop"
   }
 ]

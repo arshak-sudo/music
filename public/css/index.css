@@ -122,6 +122,7 @@ main h5{
 #content{
 	display: flex;
 	width: 100%;
+	flex-flow: row wrap;
 	background-color: #f5f5f5;
 	align-items: center;
 	justify-content: space-between;
