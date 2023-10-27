@@ -108,6 +108,9 @@ fetch(`/audio/${id}`)
 		const contentContainer = $("#content");
 		const audioPlayer = $("#audioPlayer");
 		audioPlayer.attr("src", `/uploads/${audio.audio}`);
+		$("#audioData").html(`
+			<div> ${audio.singer} - ${audio.title} </div>	
+		`);
 	})
 
 
