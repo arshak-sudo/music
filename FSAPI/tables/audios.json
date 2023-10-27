@@ -14,5 +14,13 @@
     "poster": "R0YuKKVuuLrlMjX4LD0dpcW2v1vWrYyJ_CIhSgCHICA.webp",
     "audio": "Aqua - Barbie Girl.mp3",
     "genre": "pop"
+  },
+  {
+    "id": 3,
+    "title": "Apocalypse",
+    "singer": "Cigarettes After Sex",
+    "poster": "Cigarettes After Sex - Apocalypse.jpg",
+    "audio": "Cigarettes After Sex - Apocalypse.mp3",
+    "genre": "pop"
   }
 ]
