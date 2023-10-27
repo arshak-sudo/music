@@ -103,18 +103,46 @@ $(document).ready(async () => {
 	var audios = await getAudios();
 	const contentContainer = $("#content");
 	$.each(audios, function( index, audio ) {
-	  	contentContainer.append(`
-	  		<div class='audioCard'>
-	  			<div class="audioCardPoster">
-	  				<img src='/uploads/${audio.poster}' />
-	  			</div>
-	  			<p><a href="/listen/${audio.id}">${audio.singer} - ${audio.title}</a></p>
-	  		</div>
-  		`);
-	});
-	var audioCards = $(".audioCard");
-	console.log(audioCards);
+		var audioCard = document.createElement("div");
+		audioCard.classList.add("audioCard");
+		var audioCardPoster = document.createElement("div");
+		audioCardPoster.classList.add("audioCardPoster");
+		audioCardPoster.style.backgroundImage = `url('/uploads/${audio.poster}')`;
+		audioCardPoster.style.backgroundSize = "cover";
+		audioCardPoster.style.backgroundPosition = "center";
+		var p = document.createElement("p");
+		var audioLink = document.createElement("a");
+		audioLink.classList.add("audioLink");
+		audioLink.setAttribute("href", `/listen/${audio.id}`);
+		audioLink.innerText = `${audio.singer} - ${audio.title}`;
 
+		p.append(audioLink);
+
+		audioCard.append(p);
+		audioCard.prepend(audioCardPoster);
+
+	  	contentContainer.append(audioCard);
+
+	  	$(document).ready(function(){
+	  		$(".audioCard").width('30%');
+			$(".audioCard").height('20vh');
+			let audioCardWidth = $(".audioCard").width();
+
+			let height = audioCardWidth - ((audioCardWidth * 25) / 100);
+			$(".audioCard").height(height);
+	  	});
+	  	$( window ).on( "resize", function() {
+		  	$(".audioCard").width('30%');
+			$(".audioCard").height('20vh');
+			let audioCardWidth = $(".audioCard").width();
+
+			let height = audioCardWidth - ((audioCardWidth * 25) / 100);
+			$(".audioCard").height(height);
+		} );
+  		
+	});
+
+	
 });
 
 async function getAudios(){
