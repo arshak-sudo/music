@@ -104,16 +104,95 @@ var id = parseInt(url[1]);
 
 fetch(`/audio/${id}`)
 	.then(data => data.json())
-	.then((audio) => {
+	.then(async (audio) => {
 		const contentContainer = $("#content");
 		const audioPlayer = $("#audioPlayer");
 		audioPlayer.attr("src", `/uploads/${audio.audio}`);
 		$("#audioData").html(`
 			${audio.singer} - ${audio.title}
 		`);
+		var audios = await getAudios();
+		var sidebar = $("#sidebar");
+		$.each(audios, function( index, audio ) {
+			sidebar.append(`
+				<div class="sidebarMusicCards">
+					<div class="sidebarMusicPoster"></div>
+					<a class="sidebarMusicLink" href='/listen/${audio.id}'>${audio.title}</a>
+				</div>
+			`);
+			$(document).ready( async function(){
+				$(".sidebarMusicPoster").width('40%');
+				let sidebarMusicPosterWidth = $(".sidebarMusicPoster").width();
+
+				let height = sidebarMusicPosterWidth - ((sidebarMusicPosterWidth * 40) / 100);
+				$(".sidebarMusicPoster").height(height);
+			});
+			$( window ).on( "resize", async function() {
+			  	$(".sidebarMusicPoster").width('40%');
+				let sidebarMusicPosterWidth = $(".sidebarMusicPoster").width();
+
+				let height = sidebarMusicPosterWidth - ((sidebarMusicPosterWidth * 40) / 100);
+				$(".sidebarMusicPoster").height(height);
+			});
+			document.getElementsByClassName("sidebarMusicPoster")[index].style.backgroundImage = `url("/uploads/${audio.poster}")`;
+			$(".sidebarMusicPoster").css("background-size", 'cover');
+			$(".sidebarMusicPoster").css("background-position", 'center');
+		});
+		if($('#audioPlayer')){
+			$('#audioPlayer').on('ended', async function() {
+	   			await audioEnded();
+			});
+		}
+		let sidebarMusicLinks = await getSidebarMusicLinks();
+		$.each(sidebarMusicLinks, function( index, sidebarMusicLink ) {
+			console.log(sidebarMusicLink);
+			sidebarMusicLink.addEventListener("click", function(){
+				localStorage.setItem("index", index+1);
+			});
+		});
+		
 	})
 
 
 
+
+
+
+async function getAudios(){
+	var audios = await fetch("/audios");
+	audios = await audios.json();
+	audios = audios.slice(0, 6);
+	audios = audios.reverse();
+	return audios;
+}
+
+async function getSidebarMusicLinks(){
+	return $('.sidebarMusicLink');
+}
+
+
+async function audioEnded(){
+	let index;
+	let sidebarMusicLinks = await getSidebarMusicLinks();
+
+	console.log(localStorage.getItem("index"));
+	if(localStorage.getItem("index") === null){
+		index = 0;
+		localStorage.setItem("index", 1);
+		sidebarMusicLinks[index+1].click();
+	}else{
+		index = localStorage.getItem("index");
+		if(index < sidebarMusicLinks.length){
+			sidebarMusicLinks[index].click();
+		}else{
+			index = 0;
+			sidebarMusicLinks[index].click();
+		}
+		index++;
+		localStorage.setItem("index", index);
+
+	}
+	console.log(localStorage.getItem("index"));
+}
 
 

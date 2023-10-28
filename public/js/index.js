@@ -1,3 +1,5 @@
+localStorage.removeItem("index");
+
 let usernameTag = document.querySelector("#nav-right");
 fetch("/session-user")
 	.then(data=>data.json())
@@ -113,6 +115,10 @@ $(document).ready(async () => {
 		var p = document.createElement("p");
 		var audioLink = document.createElement("a");
 		audioLink.classList.add("audioLink");
+		audioLink.addEventListener("click", () => {
+			localStorage.setItem("index", index + 1);
+		});
+
 		audioLink.setAttribute("href", `/listen/${audio.id}`);
 		audioLink.innerText = `${audio.singer} - ${audio.title}`;
 
@@ -142,11 +148,23 @@ $(document).ready(async () => {
   		
 	});
 
+	// var audioLinks = await getAudioLinks();
+	// $.each(audioLinks, function( index, audioLink ) {
+	// 	audioLink.addEventListener("click", () => {
+	// 		localStorage.setItem("index", );
+	// 	});
+	// })
 	
 });
 
 async function getAudios(){
 	var audios = await fetch("/audios");
 	audios = await audios.json();
+	audios = audios.slice(0, 6);
+	audios = audios.reverse();
 	return audios;
+}
+
+async function getAudioLinks(){
+	return $('.audioLink');
 }
