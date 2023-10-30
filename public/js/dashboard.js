@@ -1,4 +1,19 @@
 let usernameTag = document.querySelector("#nav-right");
+var url = window.location.pathname.slice(1).split("/");
+let user_id = parseInt(url[1]);
+if(!user_id){
+	user_id = 1; // Admin id = 1
+}
+
+async function drowAvatar(){
+	let avatar = await fetch(`/avatar/${user_id}`);
+	avatar = await avatar.json();
+	console.log(avatar);
+	const navbarAvatar = document.getElementById("navbar-avatar");
+	navbarAvatar.style.backgroundImage = `url('/avatars/${avatar.image}')`;
+	navbarAvatar.style.backgroundSize = "cover";
+	navbarAvatar.style.backgroundPosition = "center";
+}
 fetch("/session-user")
 	.then(data=>data.json())
 	.then(async (user) => {
@@ -23,6 +38,7 @@ fetch("/session-user")
 				</div>
 			`;
 			await navbarDropedown();
+			await drowAvatar()
 			let accountLink = document.querySelector("#account-link");
 			accountLink.innerHTML += `${user.firstName}`;
 			accountLink.setAttribute("href", `/account/${user.id}`);
@@ -65,6 +81,7 @@ fetch("/session-user")
 						</div>
 					`;
 					await navbarDropedown();
+					await drowAvatar()
 					let accountLink = document.querySelector("#account-link");
 					accountLink.innerHTML += `${user.firstName} ${user.lastname}`;
 					accountLink.setAttribute("href", `/account/${user.id}`);

@@ -1,5 +1,15 @@
 localStorage.removeItem("index");
 
+async function drowAvatar(user_id){
+	let avatar = await fetch(`/avatar/${user_id}`);
+	avatar = await avatar.json();
+	console.log(avatar);
+	const navbarAvatar = document.getElementById("navbar-avatar");
+	navbarAvatar.style.backgroundImage = `url('/avatars/${avatar.image}')`;
+	navbarAvatar.style.backgroundSize = "cover";
+	navbarAvatar.style.backgroundPosition = "center";
+}
+
 let usernameTag = document.querySelector("#nav-right");
 fetch("/session-user")
 	.then(data=>data.json())
@@ -25,6 +35,7 @@ fetch("/session-user")
 				</div>
 			`;
 			await navbarDropedown();
+			await drowAvatar(user.id);
 			let accountLink = document.querySelector("#account-link");
 			accountLink.innerHTML += `${user.firstName}`;
 			accountLink.setAttribute("href", `/account/${user.id}`);
@@ -66,6 +77,7 @@ fetch("/session-user")
 						</div>
 					`;
 					await navbarDropedown();
+					await drowAvatar(user.id);
 					let accountLink = document.querySelector("#account-link");
 					accountLink.innerHTML += `${user.firstName} ${user.lastname}`;
 					accountLink.setAttribute("href", `/account/${user.id}`);
@@ -147,13 +159,6 @@ $(document).ready(async () => {
 		} );
   		
 	});
-
-	// var audioLinks = await getAudioLinks();
-	// $.each(audioLinks, function( index, audioLink ) {
-	// 	audioLink.addEventListener("click", () => {
-	// 		localStorage.setItem("index", );
-	// 	});
-	// })
 	
 });
 

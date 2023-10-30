@@ -1,0 +1,32 @@
+[
+  {
+    "id": 8,
+    "user_id": 1,
+    "image": "Elle King -.jpg",
+    "role": "image"
+  },
+  {
+    "id": 9,
+    "user_id": 1,
+    "image": "The Avener & Phoebe Killdeer - Fade Out Lines.jpg",
+    "role": "image"
+  },
+  {
+    "id": 10,
+    "user_id": 1,
+    "image": "Foster The People - Pumped Up Kicks.jpg",
+    "role": "image"
+  },
+  {
+    "id": 11,
+    "user_id": 1,
+    "image": "R0YuKKVuuLrlMjX4LD0dpcW2v1vWrYyJ_CIhSgCHICA.webp",
+    "role": "image"
+  },
+  {
+    "id": 12,
+    "user_id": 1,
+    "image": "The Avener & Phoebe Killdeer - Fade Out Lines.jpg",
+    "role": "avatar"
+  }
+]

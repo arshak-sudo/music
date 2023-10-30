@@ -5,6 +5,8 @@ var app = express();
 
 var User = require(__dirname + '/FSAPI/Users');
 var Audio = require(__dirname + '/FSAPI/Audios');
+var Avatar = require(__dirname + '/FSAPI/Avatars');
+
 const port = process.env.port || 3001;
 
 var bcrypt = require('bcrypt');
@@ -40,6 +42,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
+const avatarStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/avatars/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+
+const uploadAvatar = multer({ storage: avatarStorage })
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -160,7 +172,25 @@ app.get('/account/:id',  async function(req, res) {
     // console.log(req.params['id']);
     res.sendFile(__dirname + "/public/pages/account.html");
 });
+app.post("/new-avatar", uploadAvatar.fields([{ name: 'avatar', maxCount: 1 }]), async function(req, res, next){
+    let user_id;
+    if (!req.cookies.user) {
+        user_id = req.session.user.id;
+    }else{
+        user_id = JSON.parse(req.cookies.user).id;
+    }
+    console.log(req.cookies.user);
+    var id = await Avatar.avatarCreate(user_id, req.files.avatar[0].originalname, "avatar");
+    res.redirect('/account/' + user_id);
 
+});
+app.get('/avatar/:user_id', async function(req, res) {
+  // console.log(req.params['user_id']);
+    const avatar = await Avatar.getTableDataByUserId(req.params['user_id']);
+    console.log(avatar);
+    
+    return res.json(avatar);
+});
 app.get('/logout', async function(req, res) {
     let session=req.session;
     session.user = undefined;
