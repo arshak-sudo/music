@@ -19,7 +19,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 app.use(sessions({
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
     saveUninitialized:true,
-    cookie: { maxAge: oneDay },
+    cookie: { maxAge: oneDay * 10 },
     resave: false
 }));
 app.use(cookieParser());
@@ -50,17 +50,11 @@ app.use(express.urlencoded({extended: true}));
 app.get('/', async function(req, res) { 
     let session=req.session;
     let user = session.user;
-    console.log('Cookies: ', req.cookies);
-    console.log('Signed Cookies: ', req.signedCookies);
-    console.log(user);
     res.sendFile(__dirname + "/public/pages/main.html");
 });
 app.get('/login', async function(req, res) {  
     let session=req.session;
     let user = session.user;
-    console.log('Cookies: ', req.cookies);
-    console.log('Signed Cookies: ', req.signedCookies);
-    console.log(user);
     if(!user && !req.cookies.user){
       res.sendFile(__dirname + "/public/pages/login.html");
     }else{
@@ -68,7 +62,7 @@ app.get('/login', async function(req, res) {
     }
 });
 app.post('/login', async function(req, res) { 
-    let session=req.session;
+    let session = req.session;
     
     if(!req.body.username.match("[A-Za-z0-9]{4,16}")){
       return res.json({error_code: 1});
@@ -126,11 +120,8 @@ app.post('/register', async function(req, res) {
 });
 
 app.get('/home', async function(req, res) {
-    console.log('Cookies: ', req.cookies);
-    console.log('Signed Cookies: ', req.signedCookies);
     let session=req.session;
     let user = session.user;
-    console.log(user);
     if(user || req.cookies.user){
       res.sendFile(__dirname + "/public/pages/home.html");
     }else{
@@ -140,8 +131,6 @@ app.get('/home', async function(req, res) {
 });
 
 app.get('/home/:id', async function(req, res) {
-    console.log('Cookies: ', req.cookies);
-    console.log('Signed Cookies: ', req.signedCookies);
     let session=req.session;
     let user = session.user;
     if(user || req.cookies.user){
@@ -168,7 +157,7 @@ app.get('/cookie-user',  async function(req, res) {
 });
 
 app.get('/account/:id',  async function(req, res) {
-    console.log(req.params['id']);
+    // console.log(req.params['id']);
     res.sendFile(__dirname + "/public/pages/account.html");
 });
 
@@ -186,12 +175,10 @@ app.get('/dashboard', async function(req, res) {
 });
 
 app.post("/new-audio", upload.fields([{ name: 'poster', maxCount: 1 }, { name: 'audio', maxCount: 8 }]), async function(req, res, next){
-    console.log(req.files.audio[0].originalname);
-    console.log(req.files.poster[0].originalname);
-    
+    // console.log(req.files.audio[0].originalname);
+    // console.log(req.files.poster[0].originalname);
   var id = await Audio.audioCreate(req.body.title, req.body.singer, req.files.poster[0].originalname, req.files.audio[0].originalname, req.body.genre);
-  // return res.json(1);
-  return res.json(11);
+  res.redirect('/dashboard');
 
 });
 

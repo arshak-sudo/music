@@ -46,5 +46,13 @@
     "poster": "The Avener & Phoebe Killdeer - Fade Out Lines.jpg",
     "audio": "The Avener & Phoebe Killdeer - Fade Out Lines (The Avener Rework).mp3",
     "genre": "pop"
+  },
+  {
+    "id": 7,
+    "title": "Your Heart Is As Black As Night",
+    "singer": "Beth Hart & Joe Bonamassa",
+    "poster": "Beth Hart & Joe Bonamassa - Your Heart Is As Black As Night.jpg",
+    "audio": "beth-hart-feat-joe-bonamassa-your-heart-is-as-black-as-night.mp3",
+    "genre": "blues"
   }
 ]

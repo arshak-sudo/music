@@ -161,8 +161,8 @@ fetch(`/audio/${id}`)
 async function getAudios(){
 	var audios = await fetch("/audios");
 	audios = await audios.json();
-	audios = audios.slice(0, 6);
 	audios = audios.reverse();
+	audios = audios.slice(0, 7);
 	return audios;
 }
 
