@@ -1,4 +1,18 @@
 let usernameTag = document.querySelector("#nav-right");
+$(document).ready(async function(){
+	let session_user = await sessionUser();
+	console.log(session_user);
+	$("#likeForm").click(async function(){
+		alert(1);
+		await like(1,1);
+		await getLikesCount(1);
+	});
+});
+async function sessionUser(){
+	let user = await fetch("/session-user");
+	user = await user.json();
+	return user;
+}
 fetch("/session-user")
 	.then(data=>data.json())
 	.then(async (user) => {
@@ -145,17 +159,59 @@ fetch(`/audio/${id}`)
 		}
 		let sidebarMusicLinks = await getSidebarMusicLinks();
 		$.each(sidebarMusicLinks, function( index, sidebarMusicLink ) {
-			console.log(sidebarMusicLink);
 			sidebarMusicLink.addEventListener("click", function(){
 				localStorage.setItem("index", index+1);
 			});
 		});
-		
+
+		fetch(`/is-liked/1`)
+			.then(data=>data.json())
+			.then(async (status) => {
+				let socialTools = $("#socialTools");
+				let likesCount = await getLikesCount(1);
+				console.log(likesCount);
+				if(!status){
+					socialTools.prepend(`
+						<a href="#" id="likeForm">
+							<i class="fa fa-thumbs-up"></i>
+						</a><sub>${likesCount}</sub>
+						&nbsp; &nbsp;
+					`);
+				}else{
+					socialTools.prepend(`
+						<a href="#" id="unlikeForm">
+							<i class="fa fa-thumbs-up" style="color: green;"></i>
+						</a><sub>${likesCount}</sub>
+						&nbsp; &nbsp;
+					`);
+				}
+				
+			})
+
+			
 	})
 
+async function getLikesCount(audio_id){
+	let count = await fetch(`/likes-count/${audio_id}`);
+	count = await count.json();
+	return count;
+}
 
-
-
+async function like(audio_id, user_id){
+	let like = await fetch(`/like`, {
+		method: "POST",
+	    headers: {
+	      "Content-Type": "application/json",
+	    },
+	    body: JSON.stringify({
+	    	audio_id: audio_id,
+	    	user_id: user_id
+	    }),
+	});
+	like = await like.json();
+	console.log(like);
+	return like;
+}
 
 
 async function getAudios(){

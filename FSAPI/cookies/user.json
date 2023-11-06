@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "firstName": "Arshak",
+  "lastname": "Petrosyan",
+  "username": "arshak",
+  "password": "$2b$10$Mj0pAlcbCkx1rmISO8aSpe.m6YYUsRsN21NjkMTQ1JGpylKhKRy62",
+  "role": "admin",
+  "gender": "male",
+  "date": "1994-06-29",
+  "remember_me": "true"
+}

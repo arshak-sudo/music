@@ -1,5 +1,4 @@
 document.querySelector("#loginForm").addEventListener("submit", async (event) => {
-	event.preventDefault();
 	const data = await serialize(document.querySelector("#loginForm"));
 	console.log(data);
 	fetch("/login", {
@@ -29,8 +28,3 @@ async function serialize(form) {
 	return json;
 }
 
-fetch("/cookie-user")
-	.then(data=>data.json())
-	.then(user => {
-		console.log(user);
-	});

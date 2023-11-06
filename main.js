@@ -1,18 +1,24 @@
 var fs = require('fs');
 
+var passport = require("passport");
+var passportLocal = require("passport-local");
+
 var express = require('express');
 var app = express();
 
 var User = require(__dirname + '/FSAPI/Users');
 var Audio = require(__dirname + '/FSAPI/Audios');
 var Avatar = require(__dirname + '/FSAPI/Avatars');
+var Like = require(__dirname + '/FSAPI/Likes');
+
+var Cookies = require(__dirname + '/FSAPI/Cookies');
+var RememberMe = require(__dirname + '/FSAPI/RememberMe');
 
 const port = process.env.port || 3001;
 
 var bcrypt = require('bcrypt');
 
 const sessions = require('express-session');
-var cookieParser = require('cookie-parser');
 
 // creating 24 hours from milliseconds
 const oneDay = 1000 * 60 * 60 * 24;
@@ -22,14 +28,64 @@ app.use(sessions({
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
     saveUninitialized:true,
     cookie: { maxAge: oneDay * 10 },
-    resave: false
+    resave: true
 }));
-app.use(cookieParser());
 
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.static('public'));
 app.use(express.static('public/pages'));
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.set('Access-Control-Expose-Headers', 'field');
+    next();
+});
+
+app.use(async function(req, res, next) {
+  if (req.method == 'POST' && req.url == '/login') {
+    if (req.body.remember_me) {
+        await RememberMe.rememberCreate("true");
+    }else{
+        await RememberMe.rememberCreate("false");
+    }
+  }
+  return next();
+});
+
+passport.use(new passportLocal.Strategy({
+
+}, async (username, password, done) => {
+    let users = await User.getTableData();
+    let user = users.find((user) => user.username === username);
+    if(user === undefined){
+        return done(null, null, {message: "incorrect username"});
+    }
+
+    if(await bcrypt.compare(password, user.password)){
+        return done(null, user);
+    }
+
+    done(null, null, {message: "incorrect password"});
+
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+passport.deserializeUser(async (id, done) => {
+    let users = await User.getTableData();
+    let user = users.find((user) => user.id === id);
+    var remember_me = await RememberMe.get();
+    user.remember_me = remember_me;
+    done(null, user);
+});
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -53,55 +109,50 @@ const avatarStorage = multer.diskStorage({
 
 const uploadAvatar = multer({ storage: avatarStorage })
 
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-
 // =====================================================
 
+app.get('/', async function(req, res, next) { 
+    var cookie = await Cookies.get("user");
+    if(req.isAuthenticated() === false && cookie !== null){
+        req.login(cookie, function(err) {
+            if (err) { return next(err); }
+        });
+    }
+console.log(req.user);
+    if(req.isAuthenticated() !== false){
+        await Cookies.set("user", req.user);
+    }
 
-app.get('/', async function(req, res) { 
-    let session=req.session;
-    let user = session.user;
-    res.sendFile(__dirname + "/public/pages/main.html");
+    if(req.isAuthenticated() === false){
+        return res.redirect("/login");
+    }
+    return res.sendFile(__dirname + "/public/pages/main.html");
 });
+
 app.get('/login', async function(req, res) {  
-    let session=req.session;
-    let user = session.user;
-    if(!user && !req.cookies.user){
-      res.sendFile(__dirname + "/public/pages/login.html");
-    }else{
-      return res.redirect("/home");
+    if(req.isAuthenticated() === true){
+        return res.redirect("/");
     }
+    res.sendFile(__dirname + "/public/pages/login.html");
 });
-app.post('/login', async function(req, res) { 
-    let session = req.session;
-    
-    if(!req.body.username.match("[A-Za-z0-9]{4,16}")){
-      return res.json({error_code: 1});
-    }else if(!req.body.password.match("[A-Za-z0-9]{4,16}")){
-      return res.json({error_code: 2});
-    }else{
-      var userIsset = await User.userIsset(req.body.username, req.body.password);
-      if(userIsset.userIsset){
-        session.user = userIsset.user;
-        if(req.body.rememberMe){
-          res.cookie('user', JSON.stringify(userIsset.user), {expire: 360000 + Date.now()}); 
-        }
-
-        return res.json({success: true, id: userIsset.user.id});
-      }else{
-        return res.json({error_code: 3});
-      }
-      
-    }
+app.post('/login', passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login"
+}), (req, res, next) => {
+    user.remember_me = req.body.remember_me;
+    console.log(user);
+    req.login(user, function(err) {
+        if (err) { return next(err); }
+        return next();
+    });
 });
 app.get('/register', async function(req, res) {
     let session=req.session;
     let user = session.user;
     if(!user && !req.cookies.user){
-      res.sendFile(__dirname + "/public/pages/register.html");
+        res.sendFile(__dirname + "/public/pages/register.html");
     }else{
-      res.redirect("/home/ + user.id");
+        return res.redirect("/home/ + user.id");
     }
 });
 app.post('/register', async function(req, res) {
@@ -125,7 +176,7 @@ app.post('/register', async function(req, res) {
     };
     session.user = newUser;
     if(req.body.rememberMe){
-      res.cookie('user', JSON.stringify(newUser), {expire: 360000 + Date.now()}); 
+      console.log(req.body.remember_me);
     }
     return res.json({success: true, id: id});
   }
@@ -155,16 +206,11 @@ app.get('/home/:id', async function(req, res) {
 
 
 app.get('/session-user',  async function(req, res) {
-    let session=req.session;
-    let user = session.user;
-    return res.json(user);
-});
-app.get('/cookie-user',  async function(req, res) {
-    if(req.cookies.user){
-      let user = JSON.parse(req.cookies.user);
-      return res.json(user);
+    let user = req.user;
+    if(user){
+        return res.json(user);
     }else{
-      return res.json(false);
+        return res.json(null);
     }
 });
 
@@ -172,6 +218,7 @@ app.get('/account/:id',  async function(req, res) {
     // console.log(req.params['id']);
     res.sendFile(__dirname + "/public/pages/account.html");
 });
+
 app.post("/new-avatar", uploadAvatar.fields([{ name: 'avatar', maxCount: 1 }]), async function(req, res, next){
     let user_id;
     if (!req.cookies.user) {
@@ -179,7 +226,7 @@ app.post("/new-avatar", uploadAvatar.fields([{ name: 'avatar', maxCount: 1 }]), 
     }else{
         user_id = JSON.parse(req.cookies.user).id;
     }
-    console.log(req.cookies.user);
+    // console.log(req.cookies.user);
     var id = await Avatar.avatarCreate(user_id, req.files.avatar[0].originalname, "avatar");
     res.redirect('/account/' + user_id);
 
@@ -187,15 +234,16 @@ app.post("/new-avatar", uploadAvatar.fields([{ name: 'avatar', maxCount: 1 }]), 
 app.get('/avatar/:user_id', async function(req, res) {
   // console.log(req.params['user_id']);
     const avatar = await Avatar.getTableDataByUserId(req.params['user_id']);
-    console.log(avatar);
+    // console.log(avatar);
     
     return res.json(avatar);
 });
 app.get('/logout', async function(req, res) {
-    let session=req.session;
-    session.user = undefined;
-    res.clearCookie('user');
-    res.redirect("/");
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        Cookies.remove("user")
+        res.redirect('/login');
+    });
 });
 
 app.get('/dashboard', async function(req, res) { 
@@ -219,7 +267,7 @@ app.get('/audios', async function(req, res) {
 
 app.get('/audio/:id', async function(req, res) { 
     var audio = await Audio.getTableDataById(req.params.id);
-    console.log(audio);
+    // console.log(audio);
     return res.json(audio);
 });
 
@@ -227,6 +275,33 @@ app.get('/listen/:id', async function(req, res) {
     res.sendFile(__dirname + "/public/pages/listen.html");
 });
 
+app.get('/is-liked/:audio_id',  async function(req, res) {
+    var status = await Like.isLiked(req.params["audio_id"], 1);
+    if(!status){
+        return res.json(false);
+    }else{
+        return res.json(true);
+    }
+});
+
+app.get('/likes-count/:audio_id',  async function(req, res) {
+    var likes = await Like.getTableData(1);
+    // console.log(likes.length);
+    if(!likes){
+        return res.json(0);
+    }else{
+        return res.json(likes.length);
+    }
+});
+app.post('/like',  async function(req, res) {
+  console.log(req.body);
+    var like = await Like.like(req.body.audio_id, req.body.user_id);
+    if(!likes){
+        return res.json(false);
+    }else{
+        return res.json(true);
+    }
+});
 app.listen(port, () => {
   	console.log(`Example app listening on port ${port}`)
 })
