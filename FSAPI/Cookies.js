@@ -21,9 +21,7 @@ const get = async function(cookieName){
 const remove = async function(cookieName){
 	var file = __dirname + "/cookies/" + cookieName + ".json";
 	fs.writeFile(file, JSON.stringify(null), function(){
-		return 1;
 	});
-	return 0;
 }
 
 module.exports.set = set;

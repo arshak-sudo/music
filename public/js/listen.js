@@ -8,6 +8,15 @@ $(document).ready(async function(){
 		await getLikesCount(1);
 	});
 });
+async function drowAvatar(user_id){
+	let avatar = await fetch(`/avatar/${user_id}`);
+	avatar = await avatar.json();
+	console.log(avatar);
+	const navbarAvatar = document.getElementById("navbar-avatar");
+	navbarAvatar.style.backgroundImage = `url('/avatars/${avatar.image}')`;
+	navbarAvatar.style.backgroundSize = "cover";
+	navbarAvatar.style.backgroundPosition = "center";
+}
 async function sessionUser(){
 	let user = await fetch("/session-user");
 	user = await user.json();
@@ -37,6 +46,7 @@ fetch("/session-user")
 				</div>
 			`;
 			await navbarDropedown();
+			await drowAvatar(user.id);
 			let accountLink = document.querySelector("#account-link");
 			accountLink.innerHTML += `${user.firstName}`;
 			accountLink.setAttribute("href", `/account/${user.id}`);
@@ -78,6 +88,7 @@ fetch("/session-user")
 						</div>
 					`;
 					await navbarDropedown();
+					await drowAvatar(user.id);
 					let accountLink = document.querySelector("#account-link");
 					accountLink.innerHTML += `${user.firstName} ${user.lastname}`;
 					accountLink.setAttribute("href", `/account/${user.id}`);

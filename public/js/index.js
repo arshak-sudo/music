@@ -1,3 +1,19 @@
+window.onbeforeunload = function (event) {
+    var message = 'Important: Please click on \'Save\' button to leave this page.';
+    if (typeof event == 'undefined') {
+        event = window.event;
+    }
+    // if (event) {
+    //     console.log(event);
+    	
+    //     event.returnValue = message;
+    // }
+
+    fetch("/delete-session");
+
+    // return message;
+};
+
 localStorage.removeItem("index");
 
 async function drowAvatar(user_id){

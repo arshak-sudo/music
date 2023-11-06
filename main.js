@@ -1,7 +1,11 @@
 var fs = require('fs');
 
+var spawn = require('child_process').spawn;
+
 var passport = require("passport");
 var passportLocal = require("passport-local");
+
+const flash = require("connect-flash");
 
 var express = require('express');
 var app = express();
@@ -86,6 +90,7 @@ passport.deserializeUser(async (id, done) => {
     user.remember_me = remember_me;
     done(null, user);
 });
+
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -107,44 +112,67 @@ const avatarStorage = multer.diskStorage({
   }
 })
 
-const uploadAvatar = multer({ storage: avatarStorage })
+const uploadAvatar = multer({ storage: avatarStorage });
+// =========================================================
+function checkAuthentication(req, res, next){
+    if(req.isAuthenticated() === false  && req.url !== '/login' &&  req.url !== '/register'){
+        return res.redirect("/login");
+    }
+    if(req.isAuthenticated() === true  && req.url === '/login' || req.url === '/register'){
+        return res.redirect("/");
+    }
+    next();
+}
+
+app.use(async (req, res, next) => {
+    console.log(req.isAuthenticated());
+    var cookieUser = await Cookies.get("user");
+    console.log(req.user);
+    if(req.isAuthenticated() === false && cookieUser !== null){
+        req.login(cookieUser, function(err) {
+            if (err) { return next(err); }
+        });
+    }
+    if(req.isAuthenticated() === true &&  cookieUser === null){
+        await Cookies.set("user", req.user);
+        
+    }
+    return next();
+});
+
+
+
+app.use(checkAuthentication);
+
+app.use(flash());
+
+
 
 // =====================================================
 
 app.get('/', async function(req, res, next) { 
-    var cookie = await Cookies.get("user");
-    if(req.isAuthenticated() === false && cookie !== null){
-        req.login(cookie, function(err) {
-            if (err) { return next(err); }
-        });
-    }
-console.log(req.user);
-    if(req.isAuthenticated() !== false){
-        await Cookies.set("user", req.user);
-    }
-
-    if(req.isAuthenticated() === false){
-        return res.redirect("/login");
-    }
+    console.log(req.isAuthenticated());
     return res.sendFile(__dirname + "/public/pages/main.html");
 });
 
-app.get('/login', async function(req, res) {  
-    if(req.isAuthenticated() === true){
-        return res.redirect("/");
+app.get("/delete-session", async (req, res) => {
+    if(req.user.remember_me == "false"){
+        await Cookies.remove("user");
     }
+});
+
+app.get('/login', async function(req, res) { 
     res.sendFile(__dirname + "/public/pages/login.html");
 });
 app.post('/login', passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/login"
-}), (req, res, next) => {
-    user.remember_me = req.body.remember_me;
-    console.log(user);
-    req.login(user, function(err) {
-        if (err) { return next(err); }
-        return next();
-    });
+}), async (req, res, next) => {
+    // user.remember_me = req.user.remember_me;
+    
+    
+    console.log(req.user);
+    return next();
 });
 app.get('/register', async function(req, res) {
     let session=req.session;
@@ -183,25 +211,11 @@ app.post('/register', async function(req, res) {
 });
 
 app.get('/home', async function(req, res) {
-    let session=req.session;
-    let user = session.user;
-    if(user || req.cookies.user){
-      res.sendFile(__dirname + "/public/pages/home.html");
-    }else{
-      return res.redirect("/");
-    }
-  	
+    res.sendFile(__dirname + "/public/pages/home.html");
 });
 
 app.get('/home/:id', async function(req, res) {
-    let session=req.session;
-    let user = session.user;
-    if(user || req.cookies.user){
-      res.sendFile(__dirname + "/public/pages/home.html");
-    }else{
-      return res.redirect("/");
-    }
-    
+    res.sendFile(__dirname + "/public/pages/home.html");
 });
 
 
@@ -214,8 +228,10 @@ app.get('/session-user',  async function(req, res) {
     }
 });
 
-app.get('/account/:id',  async function(req, res) {
+app.get('/account/:id', async function(req, res) {
     // console.log(req.params['id']);
+   
+    console.log(req.isAuthenticated());
     res.sendFile(__dirname + "/public/pages/account.html");
 });
 
