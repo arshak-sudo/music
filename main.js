@@ -236,15 +236,11 @@ app.get('/account/:id', async function(req, res) {
 });
 
 app.post("/new-avatar", uploadAvatar.fields([{ name: 'avatar', maxCount: 1 }]), async function(req, res, next){
-    let user_id;
-    if (!req.cookies.user) {
-        user_id = req.session.user.id;
-    }else{
-        user_id = JSON.parse(req.cookies.user).id;
-    }
+    let user_id = req.user.id;
+    
     // console.log(req.cookies.user);
     var id = await Avatar.avatarCreate(user_id, req.files.avatar[0].originalname, "avatar");
-    res.redirect('/account/' + user_id);
+    return res.redirect('/account/' + user_id);
 
 });
 app.get('/avatar/:user_id', async function(req, res) {
