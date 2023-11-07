@@ -1,11 +1,21 @@
 let usernameTag = document.querySelector("#nav-right");
 $(document).ready(async function(){
+	var url = window.location.pathname.slice(1).split("/");
+	var id = parseInt(url[1]);
+
 	let session_user = await sessionUser();
-	console.log(session_user);
+
+	let audios = await getAudios();
+
+	await navbarDropedown(session_user);
+	await setSidebarMusicLinks(audios);
+
+	let audio = await getAudio(id);
+	await isLiked(1);
+	// console.log(session_user);
 	$("#likeForm").click(async function(){
-		alert(1);
 		await like(1,1);
-		await getLikesCount(1);
+		await isLiked(1);
 	});
 });
 async function drowAvatar(user_id){
@@ -22,96 +32,7 @@ async function sessionUser(){
 	user = await user.json();
 	return user;
 }
-fetch("/session-user")
-	.then(data=>data.json())
-	.then(async (user) => {
-		if(user){
-			usernameTag.innerHTML = `
-				<div id="navbar-avatar"></div>
-				<div id="navbar-user-dropedown">
-					<i class="fa fa-caret-down" id="navbar-user-dropedown-icon"></i>
-					<div id="navbar-user-dropedown-menu">
-						<a href="" id="account-link">
-							<i class="fa fa-user"></i>
-						</a>
-						<a href="/logout">
-							<i class="fa fa-sign-out"></i>
-							logout
-						</a><br>
-						<a href="/settings">
-							<i class="fa fa-cog"></i>
-							settings
-						</a>
-					</div>
-				</div>
-			`;
-			await navbarDropedown();
-			await drowAvatar(user.id);
-			let accountLink = document.querySelector("#account-link");
-			accountLink.innerHTML += `${user.firstName}`;
-			accountLink.setAttribute("href", `/account/${user.id}`);
-			if(user.role === "admin"){
-				let navbar_user_dropedown_menu = document.getElementById('navbar-user-dropedown-menu');
-				let dashboardLink = document.createElement("a");
-				dashboardLink.setAttribute("href", "/dashboard");
-				dashboardLink.innerText = "Dashboard";
-				navbar_user_dropedown_menu.prepend(dashboardLink);
-			}
-		}else{
-			usernameTag.innerHTML = `
-				<a href="/login">Login</a>
-			`;
-		}
-		
-	}).catch((error) => {
-	  	fetch("/cookie-user")
-			.then(data=>data.json())
-			.then(async (user) => {
-				if(user){
-					usernameTag.innerHTML = `
-						<div id="navbar-avatar"></div>
-						<div id="navbar-user-dropedown">
-							<i class="fa fa-caret-down" id="navbar-user-dropedown-icon"></i>
-							<div id="navbar-user-dropedown-menu">
-								<a href="" id="account-link">
-									<i class="fa fa-user"></i>
-								</a>
-								<a href="/logout">
-									<i class="fa fa-sign-out"></i>
-									logout
-								</a>
-								<a href="/settings">
-									<i class="fa fa-cog"></i>
-									settings
-								</a>
-							</div>
-						</div>
-					`;
-					await navbarDropedown();
-					await drowAvatar(user.id);
-					let accountLink = document.querySelector("#account-link");
-					accountLink.innerHTML += `${user.firstName} ${user.lastname}`;
-					accountLink.setAttribute("href", `/account/${user.id}`);
-					if(user.role === "admin"){
-						let navbar_user_dropedown_menu = document.getElementById('navbar-user-dropedown-menu');
-						let dashboardLink = document.createElement("a");
-						dashboardLink.setAttribute("href", "/dashboard");
-						dashboardLink.innerText = "Dashboard";
-						navbar_user_dropedown_menu.prepend(dashboardLink);
-					}
-				}else{
-					usernameTag.innerHTML = `
-						<a href="/login">Login</a>
-					`;
-				}
-				
-			});
-	});
-
-
-
-
-async function navbarDropedown(){
+async function navbarDropedown(user){
 	let navbar_user_dropedown_menu_state = false;
 	document.getElementById('navbar-user-dropedown-icon').addEventListener('click', () => {
 		if(navbar_user_dropedown_menu_state === false){
@@ -122,86 +43,123 @@ async function navbarDropedown(){
 			document.getElementById('navbar-user-dropedown-menu').style.display = 'none';
 		}
 	});
-}
-var url = window.location.pathname.slice(1).split("/");
-var id = parseInt(url[1]);
-
-
-fetch(`/audio/${id}`)
-	.then(data => data.json())
-	.then(async (audio) => {
-		const contentContainer = $("#content");
-		const audioPlayer = $("#audioPlayer");
-		audioPlayer.attr("src", `/uploads/${audio.audio}`);
-		$("#audioData").html(`
-			${audio.singer} - ${audio.title}
-		`);
-		var audios = await getAudios();
-		var sidebar = $("#sidebar");
-		$.each(audios, function( index, audio ) {
-			sidebar.append(`
-				<div class="sidebarMusicCards">
-					<div class="sidebarMusicPoster"></div>
-					<a class="sidebarMusicLink" href='/listen/${audio.id}'>${audio.title}</a>
+	if(user){
+		usernameTag.innerHTML = `
+			<div id="navbar-avatar"></div>
+			<div id="navbar-user-dropedown">
+				<i class="fa fa-caret-down" id="navbar-user-dropedown-icon"></i>
+				<div id="navbar-user-dropedown-menu">
+					<a href="" id="account-link">
+						<i class="fa fa-user"></i>
+					</a>
+					<a href="/logout">
+						<i class="fa fa-sign-out"></i>
+						logout
+					</a><br>
+					<a href="/settings">
+						<i class="fa fa-cog"></i>
+						settings
+					</a>
 				</div>
-			`);
-			$(document).ready( async function(){
-				$(".sidebarMusicPoster").width('40%');
-				let sidebarMusicPosterWidth = $(".sidebarMusicPoster").width();
-
-				let height = sidebarMusicPosterWidth - ((sidebarMusicPosterWidth * 40) / 100);
-				$(".sidebarMusicPoster").height(height);
-			});
-			$( window ).on( "resize", async function() {
-			  	$(".sidebarMusicPoster").width('40%');
-				let sidebarMusicPosterWidth = $(".sidebarMusicPoster").width();
-
-				let height = sidebarMusicPosterWidth - ((sidebarMusicPosterWidth * 40) / 100);
-				$(".sidebarMusicPoster").height(height);
-			});
-			document.getElementsByClassName("sidebarMusicPoster")[index].style.backgroundImage = `url("/uploads/${audio.poster}")`;
-			$(".sidebarMusicPoster").css("background-size", 'cover');
-			$(".sidebarMusicPoster").css("background-position", 'center');
-		});
-		if($('#audioPlayer')){
-			$('#audioPlayer').on('ended', async function() {
-	   			await audioEnded();
-			});
+			</div>
+		`;
+		await drowAvatar(user.id);
+		let accountLink = document.querySelector("#account-link");
+		accountLink.innerHTML += `${user.firstName}`;
+		accountLink.setAttribute("href", `/account/${user.id}`);
+		if(user.role === "admin"){
+			let navbar_user_dropedown_menu = document.getElementById('navbar-user-dropedown-menu');
+			let dashboardLink = document.createElement("a");
+			dashboardLink.setAttribute("href", "/dashboard");
+			dashboardLink.innerText = "Dashboard";
+			navbar_user_dropedown_menu.prepend(dashboardLink);
 		}
+	}else{
+		usernameTag.innerHTML = `
+			<a href="/login">Login</a>
+		`;
+	}
+}
+
+
+async function setSidebarMusicLinks(audios){
+	var sidebar = $("#sidebar");
+	$.each(audios, async function( index, audio ) {
+		sidebar.append(`
+			<div class="sidebarMusicCards">
+				<div class="sidebarMusicPoster"></div>
+				<a class="sidebarMusicLink" href='/listen/${audio.id}'>${audio.title}</a>
+			</div>
+		`);
+		await drowSidebarMusicLinks(index, audio);
 		let sidebarMusicLinks = await getSidebarMusicLinks();
 		$.each(sidebarMusicLinks, function( index, sidebarMusicLink ) {
 			sidebarMusicLink.addEventListener("click", function(){
 				localStorage.setItem("index", index+1);
 			});
 		});
+	});
+}
 
-		fetch(`/is-liked/1`)
-			.then(data=>data.json())
-			.then(async (status) => {
-				let socialTools = $("#socialTools");
-				let likesCount = await getLikesCount(1);
-				console.log(likesCount);
-				if(!status){
-					socialTools.prepend(`
-						<a href="#" id="likeForm">
-							<i class="fa fa-thumbs-up"></i>
-						</a><sub>${likesCount}</sub>
-						&nbsp; &nbsp;
-					`);
-				}else{
-					socialTools.prepend(`
-						<a href="#" id="unlikeForm">
-							<i class="fa fa-thumbs-up" style="color: green;"></i>
-						</a><sub>${likesCount}</sub>
-						&nbsp; &nbsp;
-					`);
-				}
+async function drowSidebarMusicLinks(index, audio){
+	$(".sidebarMusicPoster").width('40%');
+	let sidebarMusicPosterWidth = $(".sidebarMusicPoster").width();
+
+	let height = sidebarMusicPosterWidth - ((sidebarMusicPosterWidth * 40) / 100);
+	$(".sidebarMusicPoster").height(height);
+	$( window ).on( "resize", async function() {
+	  	$(".sidebarMusicPoster").width('40%');
+		let sidebarMusicPosterWidth = $(".sidebarMusicPoster").width();
+
+		let height = sidebarMusicPosterWidth - ((sidebarMusicPosterWidth * 40) / 100);
+		$(".sidebarMusicPoster").height(height);
+	});
+	document.getElementsByClassName("sidebarMusicPoster")[index].style.backgroundImage = `url("/uploads/${audio.poster}")`;
+	$(".sidebarMusicPoster").css("background-size", 'cover');
+	$(".sidebarMusicPoster").css("background-position", 'center');
+}
+
+
+async function getAudio(audio_id){
+	let audio = await fetch(`/audio/${audio_id}`);
+	audio = await audio.json();
+	const contentContainer = $("#content");
+	const audioPlayer = $("#audioPlayer");
+	audioPlayer.attr("src", `/uploads/${audio.audio}`);
+	$("#audioData").html(`
+		${audio.singer} - ${audio.title}
+	`);
+	var audios = await getAudios();
+	
+	
+	if($('#audioPlayer')){
+		$('#audioPlayer').on('ended', async function() {
+   			await audioEnded();
+		});
+	}
+	return audio;
+}
+async function isLiked(id){
+	let isLiked = await fetch(`/is-liked/1`);
+	isLiked = await isLiked.json();
+		
+	let likesCount = await getLikesCount(1);
+	console.log(likesCount);
+	if(!isLiked){
+		$("#likeForm").html("");
+		$("#likeForm").html(`
+			<i class="fa fa-thumbs-up"></i>
+			<sub>${likesCount}</sub>
+		`);
+	}else{
+		$("#likeForm").html("");
+		$("#likeForm").html(`
+			<i class="fa fa-thumbs-up" style="color: green;"></i>
+			<sub>${likesCount}</sub>
+		`);
+	}
 				
-			})
-
-			
-	})
-
+}
 async function getLikesCount(audio_id){
 	let count = await fetch(`/likes-count/${audio_id}`);
 	count = await count.json();

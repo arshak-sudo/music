@@ -44,13 +44,13 @@ app.use(passport.session());
 app.use(express.static('public'));
 app.use(express.static('public/pages'));
 
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.set('Access-Control-Expose-Headers', 'field');
-    next();
-});
+// app.use((req, res, next) => {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+//     res.set('Access-Control-Expose-Headers', 'field');
+//     next();
+// });
 
 app.use(async function(req, res, next) {
   if (req.method == 'POST' && req.url == '/login') {
@@ -244,10 +244,7 @@ app.post("/new-avatar", uploadAvatar.fields([{ name: 'avatar', maxCount: 1 }]), 
 
 });
 app.get('/avatar/:user_id', async function(req, res) {
-  // console.log(req.params['user_id']);
     const avatar = await Avatar.getTableDataByUserId(req.params['user_id']);
-    // console.log(avatar);
-    
     return res.json(avatar);
 });
 app.get('/logout', async function(req, res) {
@@ -306,9 +303,9 @@ app.get('/likes-count/:audio_id',  async function(req, res) {
     }
 });
 app.post('/like',  async function(req, res) {
-  console.log(req.body);
+    // console.log(req.body);
     var like = await Like.like(req.body.audio_id, req.body.user_id);
-    if(!likes){
+    if(!like){
         return res.json(false);
     }else{
         return res.json(true);
