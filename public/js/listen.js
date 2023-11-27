@@ -11,13 +11,53 @@ $(document).ready(async function(){
 	await setSidebarMusicLinks(audios);
 
 	let audio = await getAudio(id);
-	await isLiked(1);
+	let likesCount = await getLikesCount(id);
+	if(! await isLiked(id)){
+		$("#likeForm").html("");
+		$("#likeForm").html(`
+			<span id="like">
+				<i class="fa fa-thumbs-up"></i>
+				<sub>${likesCount}</sub>
+			</span>
+		`);
+	}else{
+		$("#likeForm").html("");
+		$("#likeForm").html(`
+			<span id="unlike">
+				<i class="fa fa-thumbs-up" style="color: green;"></i>
+				<sub>${likesCount}</sub>
+			</span>
+		`);
+	}
+	
+	// await getLikesCount(id);
 	// console.log(session_user);
-	$("#likeForm").click(async function(){
-		await like(1,1);
-		await isLiked(1);
-	});
+	// $("#like").click(async function(){
+	// 	alert(11);
+	// 	await like(id,1);
+	// 	await isLiked(id);
+	// });
+	// $("#unlike").click(async function(){
+	// 	await unlike(id,1);
+	// 	await isLiked(id);
+	// });
+	 //  	$("#like").click(async function(){
+		// 	await like(id,1);
+		// });
+		// $("#unlike").click(async function(){
+		// 	await unlike(id,1);
+		// });
+
+		$("#likeForm").click(async function(){
+			if(! await isLiked(id)){
+				await like(id,1);
+			}else{
+				await unlike(id,1);
+			}
+		});
 });
+
+
 async function drowAvatar(user_id){
 	let avatar = await fetch(`/avatar/${user_id}`);
 	avatar = await avatar.json();
@@ -32,17 +72,9 @@ async function sessionUser(){
 	user = await user.json();
 	return user;
 }
+
 async function navbarDropedown(user){
-	let navbar_user_dropedown_menu_state = false;
-	document.getElementById('navbar-user-dropedown-icon').addEventListener('click', () => {
-		if(navbar_user_dropedown_menu_state === false){
-			navbar_user_dropedown_menu_state = true;
-			document.getElementById('navbar-user-dropedown-menu').style.display = 'block';
-		}else{
-			navbar_user_dropedown_menu_state = false;
-			document.getElementById('navbar-user-dropedown-menu').style.display = 'none';
-		}
-	});
+	
 	if(user){
 		usernameTag.innerHTML = `
 			<div id="navbar-avatar"></div>
@@ -74,6 +106,18 @@ async function navbarDropedown(user){
 			dashboardLink.innerText = "Dashboard";
 			navbar_user_dropedown_menu.prepend(dashboardLink);
 		}
+
+		let navbar_user_dropedown_menu_state = false;
+
+		document.getElementById('navbar-user-dropedown-icon').addEventListener('click', () => {
+		if(navbar_user_dropedown_menu_state === false){
+			navbar_user_dropedown_menu_state = true;
+			document.getElementById('navbar-user-dropedown-menu').style.display = 'block';
+		}else{
+			navbar_user_dropedown_menu_state = false;
+			document.getElementById('navbar-user-dropedown-menu').style.display = 'none';
+		}
+	});
 	}else{
 		usernameTag.innerHTML = `
 			<a href="/login">Login</a>
@@ -140,24 +184,28 @@ async function getAudio(audio_id){
 	return audio;
 }
 async function isLiked(id){
-	let isLiked = await fetch(`/is-liked/1`);
+	let isLiked = await fetch(`/is-liked/${id}`);
 	isLiked = await isLiked.json();
 		
-	let likesCount = await getLikesCount(1);
-	console.log(likesCount);
-	if(!isLiked){
-		$("#likeForm").html("");
-		$("#likeForm").html(`
-			<i class="fa fa-thumbs-up"></i>
-			<sub>${likesCount}</sub>
-		`);
-	}else{
-		$("#likeForm").html("");
-		$("#likeForm").html(`
-			<i class="fa fa-thumbs-up" style="color: green;"></i>
-			<sub>${likesCount}</sub>
-		`);
-	}
+	let likesCount = await getLikesCount(id);
+	// console.log(likesCount);
+	// if(!isLiked){
+	// 	$("#likeForm").html("");
+	// 	$("#likeForm").html(`
+	// 		<span id="like">
+	// 			<i class="fa fa-thumbs-up"></i>
+	// 			<sub>${likesCount}</sub>
+	// 		</span>
+	// 	`);
+	// }else{
+	// 	$("#likeForm").html("");
+	// 	$("#likeForm").html(`
+	// 		<span id="unlike">
+	// 			<i class="fa fa-thumbs-up" style="color: green;"></i>
+	// 			<sub>${likesCount}</sub>
+	// 		</span>
+	// 	`);
+	// }
 				
 }
 async function getLikesCount(audio_id){
@@ -178,8 +226,38 @@ async function like(audio_id, user_id){
 	    }),
 	});
 	like = await like.json();
-	console.log(like);
+	let likesCount = await getLikesCount(audio_id);
+	$("#likeForm").html("");
+		$("#likeForm").html(`
+			<span id="unlike">
+				<i class="fa fa-thumbs-up" style="color: green;"></i>
+				<sub>${likesCount}</sub>
+			</span>
+		`);
 	return like;
+}
+
+async function unlike(audio_id, user_id){
+	let unlike = await fetch(`/unlike`, {
+		method: "POST",
+	    headers: {
+	      "Content-Type": "application/json",
+	    },
+	    body: JSON.stringify({
+	    	audio_id: audio_id,
+	    	user_id: user_id
+	    }),
+	});
+	unlike = await unlike.json();
+	let likesCount = await getLikesCount(audio_id);
+	$("#likeForm").html("");
+		$("#likeForm").html(`
+			<span id="like">
+				<i class="fa fa-thumbs-up"></i>
+				<sub>${likesCount}</sub>
+			</span>
+		`);
+	return unlike;
 }
 
 

@@ -3,15 +3,7 @@ window.onbeforeunload = function (event) {
     if (typeof event == 'undefined') {
         event = window.event;
     }
-    // if (event) {
-    //     console.log(event);
-    	
-    //     event.returnValue = message;
-    // }
-
     fetch("/delete-session");
-
-    // return message;
 };
 
 localStorage.removeItem("index");
@@ -130,62 +122,106 @@ async function navbarDropedown(){
 }
 
 $(document).ready(async () => {
-	var audios = await getAudios();
 	const contentContainer = $("#content");
-	$.each(audios, function( index, audio ) {
-		var audioCard = document.createElement("div");
-		audioCard.classList.add("audioCard");
-		var audioCardPoster = document.createElement("div");
-		audioCardPoster.classList.add("audioCardPoster");
-		audioCardPoster.style.backgroundImage = `url('/uploads/${audio.poster}')`;
-		audioCardPoster.style.backgroundSize = "cover";
-		audioCardPoster.style.backgroundPosition = "center";
+	const categories = await getCategories();
+	$.each(categories, function( index, product ) {
+		var productCard = document.createElement("div");
+		productCard.classList.add("productCard");
+		var productCardPoster = document.createElement("div");
+		productCardPoster.classList.add("productCardPoster");
+		productCardPoster.style.backgroundImage = `url('/img/product_images/${product.poster}')`;
+		productCardPoster.style.backgroundSize = "cover";
+		productCardPoster.style.backgroundPosition = "center";
 		var p = document.createElement("p");
-		var audioLink = document.createElement("a");
-		audioLink.classList.add("audioLink");
-		audioLink.addEventListener("click", () => {
-			localStorage.setItem("index", index + 1);
-		});
+		var productLink = document.createElement("a");
+		productLink.classList.add("productLink");
+		
+		productLink.setAttribute("href", `/products/${product.name}`);
+		productLink.innerText = `${product.name}`;
 
-		audioLink.setAttribute("href", `/listen/${audio.id}`);
-		audioLink.innerText = `${audio.singer} - ${audio.title}`;
+		p.append(productLink);
 
-		p.append(audioLink);
+		productCard.append(p);
+		productCard.prepend(productCardPoster);
 
-		audioCard.append(p);
-		audioCard.prepend(audioCardPoster);
+	  	contentContainer.append(productCard);
 
-	  	contentContainer.append(audioCard);
+	  	
 
 	  	$(document).ready(function(){
-	  		$(".audioCard").width('30%');
-			$(".audioCard").height('20vh');
-			let audioCardWidth = $(".audioCard").width();
+	  		$(".productCard").width('30%');
+			$(".productCard").height('20vh');
+			let productCardWidth = $(".productCard").width();
 
-			let height = audioCardWidth - ((audioCardWidth * 25) / 100);
-			$(".audioCard").height(height);
+			let height = productCardWidth - ((productCardWidth * 25) / 100);
+			$(".productCard").height(height);
+			if(screen.width < 361){
+			$("#content").css("display", "block");
+			$(".productCard").width('100%');
+			$("#main").width('100%');
+			$("#main").css("padding", "0");
+		    $("#content").width('80%');
+			$("#content").css("margin", "auto");
+
+			let productCardWidth = $(".productCard").width();
+
+			let height = productCardWidth - ((productCardWidth * 25) / 100);
+			$(".productCard").height(height);
+		}
 	  	});
 	  	$( window ).on( "resize", function() {
-		  	$(".audioCard").width('30%');
-			$(".audioCard").height('20vh');
-			let audioCardWidth = $(".audioCard").width();
+		  	$(".productCard").width('30%');
+			$(".productCard").height('20vh');
+			let productCardWidth = $(".productCard").width();
 
-			let height = audioCardWidth - ((audioCardWidth * 25) / 100);
-			$(".audioCard").height(height);
+			let height = productCardWidth - ((productCardWidth * 25) / 100);
+			$(".productCard").height(height);
+
+			var x = window.matchMedia("(max-width: 360px)")
+			mediaQuery(x) // Call listener function at run time
+			x.addListener(mediaQuery) // Attach listener function on state changes
 		} );
-  		
+
+		function mediaQuery(x) {
+			if (x.matches) { // If media query matches
+				$("#content").css("display", "block");
+				$(".productCard").width('100%');
+				$("#main").width('100%');
+				$("#main").css("padding", "0");
+			    $("#content").width('80%');
+				$("#content").css("margin", "auto");
+
+				let productCardWidth = $(".productCard").width();
+
+				let height = productCardWidth - ((productCardWidth * 25) / 100);
+				$(".productCard").height(height);
+			} else {
+			    $("#content").css("display", "flex");
+				// $(".productCard").width('100%');
+				// $("#main").width('100%');
+				$("#main h5").css("padding", "10px 20px 0 20px");
+			 //    $("#content").width('80%');
+				// $("#content").css("margin", "auto");
+
+				let productCardWidth = $(".productCard").width();
+
+				let height = productCardWidth - ((productCardWidth * 25) / 100);
+				$(".productCard").height(height);
+			}
+		}
+
+
+
 	});
 	
 });
 
-async function getAudios(){
-	var audios = await fetch("/audios");
-	audios = await audios.json();
-	audios = audios.reverse();
-	audios = audios.slice(0, 6);
-	return audios;
+async function getCategories(){
+	var categories = await fetch("/categories");
+	categories = await categories.json();
+	return categories;
 }
 
-async function getAudioLinks(){
-	return $('.audioLink');
+async function getProductLink(){
+	return $('.productLink');
 }

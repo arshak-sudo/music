@@ -127,18 +127,18 @@ main h5{
 	align-items: center;
 	justify-content: space-between;
 }
-.audioCard{
+.productCard{
 	display: block;
 /*	width: 30%;
 	height: 25vh;*/
 }
-.audioCardPoster{
+.productCardPoster{
 	display: block;
 	width: 100%;
 	height: 75%;
 }
 
-.audioCard p{
+.productCard p{
 	display: block;
 	width: 100%;
 	height: 25%;
@@ -146,10 +146,11 @@ main h5{
 	margin: 0;
 }
 
-.audioCard p a{
+.productCard p a{
 	display: block;
 	width: 100%;
 	padding: 5px;
+	box-sizing: border-box;
 	font-family: sans-serif;
 	color: #787878;
 	text-decoration: none;
@@ -159,3 +160,20 @@ main h5{
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
+
+
+/*@media only screen and (max-width: 360px) {
+	main{
+		width: 100%;
+		padding: 0;
+		background-color: red;
+	}
+	#content{
+		display: block;
+		width: 80%;
+		margin: auto;
+	}
+	.productCard{
+		width: 100%;
+	}
+}*/

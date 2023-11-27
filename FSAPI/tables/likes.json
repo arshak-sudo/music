@@ -1,7 +1,17 @@
 [
   {
     "id": 1,
-    "audio_id": 1,
+    "audio_id": 3,
+    "user_id": 1
+  },
+  {
+    "id": 2,
+    "audio_id": 3,
+    "user_id": 1
+  },
+  {
+    "id": 3,
+    "audio_id": 3,
     "user_id": 1
   }
 ]

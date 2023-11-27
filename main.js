@@ -13,7 +13,8 @@ var app = express();
 var User = require(__dirname + '/FSAPI/Users');
 var Audio = require(__dirname + '/FSAPI/Audios');
 var Avatar = require(__dirname + '/FSAPI/Avatars');
-var Like = require(__dirname + '/FSAPI/Likes');
+
+var Categories = require(__dirname + '/FSAPI/Categories');
 
 var Cookies = require(__dirname + '/FSAPI/Cookies');
 var RememberMe = require(__dirname + '/FSAPI/RememberMe');
@@ -125,9 +126,9 @@ function checkAuthentication(req, res, next){
 }
 
 app.use(async (req, res, next) => {
-    console.log(req.isAuthenticated());
+    // console.log(req.isAuthenticated());
     var cookieUser = await Cookies.get("user");
-    console.log(req.user);
+    // console.log(req.user);
     if(req.isAuthenticated() === false && cookieUser !== null){
         req.login(cookieUser, function(err) {
             if (err) { return next(err); }
@@ -151,7 +152,7 @@ app.use(flash());
 // =====================================================
 
 app.get('/', async function(req, res, next) { 
-    console.log(req.isAuthenticated());
+    // console.log(req.isAuthenticated());
     return res.sendFile(__dirname + "/public/pages/main.html");
 });
 
@@ -171,7 +172,7 @@ app.post('/login', passport.authenticate("local", {
     // user.remember_me = req.user.remember_me;
     
     
-    console.log(req.user);
+    // console.log(req.user);
     return next();
 });
 app.get('/register', async function(req, res) {
@@ -204,7 +205,7 @@ app.post('/register', async function(req, res) {
     };
     session.user = newUser;
     if(req.body.rememberMe){
-      console.log(req.body.remember_me);
+      // console.log(req.body.remember_me);
     }
     return res.json({success: true, id: id});
   }
@@ -231,7 +232,7 @@ app.get('/session-user',  async function(req, res) {
 app.get('/account/:id', async function(req, res) {
     // console.log(req.params['id']);
    
-    console.log(req.isAuthenticated());
+    // console.log(req.isAuthenticated());
     res.sendFile(__dirname + "/public/pages/account.html");
 });
 
@@ -276,7 +277,6 @@ app.get('/audios', async function(req, res) {
 
 app.get('/audio/:id', async function(req, res) { 
     var audio = await Audio.getTableDataById(req.params.id);
-    // console.log(audio);
     return res.json(audio);
 });
 
@@ -284,33 +284,40 @@ app.get('/listen/:id', async function(req, res) {
     res.sendFile(__dirname + "/public/pages/listen.html");
 });
 
-app.get('/is-liked/:audio_id',  async function(req, res) {
-    var status = await Like.isLiked(req.params["audio_id"], 1);
-    if(!status){
-        return res.json(false);
-    }else{
-        return res.json(true);
-    }
-});
+// app.get('/is-liked/:audio_id',  async function(req, res) {
+//     var status = await Like.isLiked(req.params["audio_id"], 1);
+//     if(!status){
+//         return res.json(false);
+//     }else{
+//         return res.json(true);
+//     }
+// });
 
-app.get('/likes-count/:audio_id',  async function(req, res) {
-    var likes = await Like.getTableData(1);
-    // console.log(likes.length);
-    if(!likes){
+app.get('/categories',  async function(req, res) {
+    var categories = await Categories.get();
+    if(!categories){
         return res.json(0);
     }else{
-        return res.json(likes.length);
+        return res.json(categories);
     }
 });
-app.post('/like',  async function(req, res) {
-    // console.log(req.body);
-    var like = await Like.like(req.body.audio_id, req.body.user_id);
-    if(!like){
-        return res.json(false);
-    }else{
-        return res.json(true);
-    }
-});
+// app.post('/like',  async function(req, res) {
+//     // console.log(req.body);
+//     var like = await Like.like(req.body.audio_id, req.body.user_id);
+//     if(!like){
+//         return res.json(false);
+//     }else{
+//         return res.json(true);
+//     }
+// });
+// app.post('/unlike',  async function(req, res) {
+//     var unlike = await Like.unlike(req.body.audio_id, req.body.user_id);
+//     if(!unlike){
+//         return res.json(false);
+//     }else{
+//         return res.json(true);
+//     }
+// });
 app.listen(port, () => {
   	console.log(`Example app listening on port ${port}`)
 })

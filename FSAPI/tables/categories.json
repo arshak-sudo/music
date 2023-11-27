@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "hamem",
+    "poster": "hamem.jpg"
+  },
+  {
+    "id": 2,
+    "name": "boloki",
+    "poster": "boloki.jpg"
+  },
+  {
+    "id": 3,
+    "name": "samit",
+    "poster": "samit.jpg"
+  },
+  {
+    "id": 4,
+    "name": "spanax",
+    "poster": "spanax.jpg"
+  },
+  {
+    "id": 5,
+    "name": "petrushka",
+    "poster": "petrushka.jpg"
+  },
+  {
+    "id": 6,
+    "name": "qyarauz",
+    "poster": "qyarauz.jpg"
+  },
+  {
+    "id": 7,
+    "name": "zigzag-kanach-marol",
+    "poster": "zigzag_kanach_marol.jpg"
+  },
+  {
+    "id": 8,
+    "name": "kotem",
+    "poster": "kotem.jpg"
+  },
+  {
+    "id": 9,
+    "name": "dasta-sox",
+    "poster": "dasta_sox.jpg"
+  }
+]
